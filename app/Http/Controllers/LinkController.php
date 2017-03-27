@@ -8,6 +8,7 @@ use App\Factories\LinkFactory;
 use App\Helpers\CryptoHelper;
 use App\Helpers\LinkHelper;
 use App\Helpers\ClickHelper;
+use App\Helpers\PiwikHelper;
 
 class LinkController extends Controller {
     /**
@@ -97,9 +98,11 @@ class LinkController extends Controller {
         if (env('SETTING_ADV_ANALYTICS')) {
             // Record advanced analytics if option is enabled
             ClickHelper::recordClick($link, $request);
+        } elseif (env('SETTING_PIWIK_ANALYTICS')) {
+        	PiwikHelper::recordClick($link, $request);
         }
         // Redirect to final destination
-        return redirect()->to($long_url, 301);
+        return redirect()->to($long_url, 301)->header('Cache-Control', 'no-store, no-cache, must-revalidate');
     }
 
 }
